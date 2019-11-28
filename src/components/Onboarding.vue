@@ -2,7 +2,9 @@
   <div class="wrapper">
     <div class="full-height">
       <div v-if="stage === 1" class="full-height instruction">
+        <img class="hand" src="../assets/images/onboarding-hand.gif" />
         <div class="centered text">
+          <br />
           You can try to swipe over your screen
         </div>
       </div>
@@ -15,22 +17,23 @@
           :completeFunction="complete"
           class="full-height"
         />
-        <div class="centered text">
-          Look back at the big screen to check what you've changed!
-        </div>
+        <transition name="fade">
+          <div class="centered text">
+            Pay attention to the big screen while you swipe on the screen
+          </div>
+        </transition>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import NoSleep from "nosleep.js"
 import vueEraser from "vue-eraser"
 
 export default {
   name: 'Onboarding',
   props: {
-    emitSocketMsg: Function,
-    goToNextScene: Function
   },
   data() {
     return { stage: 1 }
@@ -40,15 +43,11 @@ export default {
   },
   methods: {
     startErasing() {
-      this.stage++
+      this.stage = 2
+      new NoSleep().enable()
     },
     complete() {
       this.$socket.emit("client_erase_block")
-    }
-  },
-  sockets: {
-    cut_scene() {
-      this.goToNextScene()
     }
   }
 }
@@ -77,5 +76,12 @@ export default {
   top: 0;
   left: 0;
   width: 100%;
+}
+
+.hand {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 100%;
 }
 </style>

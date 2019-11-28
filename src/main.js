@@ -12,7 +12,7 @@ Vue.config.productionTip = false
 const development = process.env.NODE_ENV === "development"
 Vue.use(new VueSocketIO({
   debug: true,
-  connection: development ? 'http://10.18.84.78:3000/web-client' : "/web-client"
+  connection: development ? 'http://10.23.10.106:8000/web-client' : "/web-client"
 }), vueEraser)
 
 new Vue({

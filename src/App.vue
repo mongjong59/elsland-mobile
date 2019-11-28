@@ -1,18 +1,9 @@
 <template>
   <div id="app">
     <transition name="fade" mode="out-in">
-      <ConnectionStatus
-        v-if="scene === 'CONNECTING'"
-        :goToNextScene="goToNextScene"
-      />
-      <Onboarding
-        v-if="scene === 'ONBOARDING'"
-        :goToNextScene="goToNextScene"
-      />
-      <Train
-        v-if="scene === 'TRAIN'"
-        :goToNextScene="goToNextScene"
-      />
+      <ConnectionStatus v-if="scene === 'CONNECTION_STATUS'" />
+      <Onboarding v-if="scene === 'ONBOARDING'" />
+      <Train v-if="scene === 'TRAIN'" v-bind="propsTrain" />
     </transition>
   </div>
 </template>
@@ -23,7 +14,7 @@ import Onboarding from './components/Onboarding.vue'
 import Train from './components/Train.vue'
 
 const SCENES = {
-  CONNECTING: "CONNECTING",
+  CONNECTION_STATUS: "CONNECTION_STATUS",
   ONBOARDING: "ONBOARDING",
   TRAIN: "TRAIN"
 }
@@ -37,22 +28,47 @@ export default {
   },
   data: function() {
     return {
-      scene: SCENES.CONNECTING,
-      connected: false
+      scene: SCENES.CONNECTION_STATUS,
+      connected: false,
+      propsTrain: {
+        top: 0.3,
+        bottom: 0.7,
+        id: 0,
+        segmentIndex: 0
+      }
     }
   },
   methods: {
+    goToScene(name) {
+      this.scene = SCENES[name]
+    },
     goToNextScene: function() {
       const i = Object.values(SCENES).indexOf(this.scene)
-      this.scene = SCENES[Object.keys(SCENES)[i + 1]]
+      const key = Object.keys(SCENES)[i + 1]
+      this.goToScene(key)
     }
   },
-  // debug code for scene switching
   mounted() {
     const _this = this
     window.addEventListener('keydown', function(e) {
       e.keyCode === 32 && _this.goToNextScene()
     })
+    this.goToScene("TRAIN")
+  },
+  sockets: {
+    intro_scene() {
+      this.goToScene("ONBOARDING")
+    },
+    cut_scene(data) {
+      console.log(data)
+      this.propsTrain = {
+        top: data.cut[2],
+        bottom: data.cut[0],
+        cutIndex: data.index,
+        segmentIndex: data.segment_index
+      }
+      this.goToScene("TRAIN")
+    }
   }
 }
 </script>
