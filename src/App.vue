@@ -1,10 +1,12 @@
 <template>
   <div id="app">
     <transition name="fade" mode="out-in">
-      <ConnectionStatus v-if="scene === 'CONNECTION_STATUS'" />
-      <Onboarding v-if="scene === 'ONBOARDING'" />
-      <Train v-if="scene === 'TRAIN'" v-bind="propsTrain" />
+      <ConnectionStatus v-if="isCurrentScene('CONNECTION_STATUS')" :goToNextScene="goToNextScene" :development="development" />
+      <Onboarding v-if="isCurrentScene('ONBOARDING')" :goToWaiting="goToWaiting" />
+      <Train v-if="isCurrentScene('TRAIN')" v-bind="propsTrain" />
+      <Waiting v-if="waiting" />
     </transition>
+    <button v-if="development" class="debug-button" @touchstart="goToNextScene">Jump to Next Scene</button>
   </div>
 </template>
 
@@ -12,6 +14,7 @@
 import ConnectionStatus from './components/ConnectionStatus.vue'
 import Onboarding from './components/Onboarding.vue'
 import Train from './components/Train.vue'
+import Waiting from './components/Waiting.vue'
 
 const SCENES = {
   CONNECTION_STATUS: "CONNECTION_STATUS",
@@ -20,11 +23,12 @@ const SCENES = {
 }
 
 export default {
-  name: 'app',
+  name: 'App',
   components: {
     ConnectionStatus,
     Onboarding,
-    Train
+    Train,
+    Waiting
   },
   data: function() {
     return {
@@ -35,17 +39,31 @@ export default {
         bottom: 0.7,
         id: 0,
         segmentIndex: 0
-      }
+      },
+      development: process.env.NODE_ENV !== 'production',
+      waiting: false
     }
   },
   methods: {
     goToScene(name) {
+      this.waiting = false
       this.scene = SCENES[name]
     },
-    goToNextScene: function() {
+    goToNextScene() {
       const i = Object.values(SCENES).indexOf(this.scene)
       const key = Object.keys(SCENES)[i + 1]
       this.goToScene(key)
+    },
+    goToWaiting() {
+      this.waiting = true
+      if (this.development) {
+        setTimeout(() => { this.goToNextScene() }, 2000)
+      }
+    },
+    isCurrentScene(name) {
+      let currentScene = this.scene
+      if (this.waiting) currentScene = "WAITING"
+      return name === currentScene
     }
   },
   mounted() {
@@ -53,14 +71,9 @@ export default {
     window.addEventListener('keydown', function(e) {
       e.keyCode === 32 && _this.goToNextScene()
     })
-    this.goToScene("TRAIN")
   },
   sockets: {
-    intro_scene() {
-      this.goToScene("ONBOARDING")
-    },
     cut_scene(data) {
-      console.log(data)
       this.propsTrain = {
         top: data.cut[2],
         bottom: data.cut[0],
@@ -68,6 +81,9 @@ export default {
         segmentIndex: data.segment_index
       }
       this.goToScene("TRAIN")
+    },
+    waiting_page() {
+      this.goToWaiting()
     }
   }
 }
@@ -90,11 +106,10 @@ export default {
   height: 100%;
 }
 
-.fade-enter-active, .fade-leave-active {
-  transition: opacity 1.5s;
-}
-
-.fade-enter, .fade-leave-to {
-  opacity: 0;
+.debug-button {
+  right: 0;
+  bottom: 0;
+  position: absolute;
+  z-index: 99;
 }
 </style>

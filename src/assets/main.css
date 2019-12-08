@@ -1,6 +1,7 @@
 html {
   color: white;
   overflow: hidden;
+  line-height: 1.5;
 }
 
 div {
@@ -33,4 +34,12 @@ html, body, .full-height {
 
 .opaque {
   opacity: 1 !important;
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 1.5s;
+}
+
+.fade-enter, .fade-leave-to {
+  opacity: 0;
 }

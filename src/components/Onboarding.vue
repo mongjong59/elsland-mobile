@@ -1,13 +1,15 @@
 <template>
   <div class="wrapper">
     <div class="full-height">
-      <div v-if="stage === 1" class="full-height instruction">
-        <img class="hand" src="../assets/images/onboarding-hand.gif" />
-        <div class="centered text">
-          <br />
-          You can try to swipe over your screen
+      <transition name="fade" appear>
+        <div v-if="stage === 1" class="full-height instruction">
+          <img class="hand" src="../assets/images/onboarding-hand.gif" />
+          <div class="centered text">
+            <br />
+            You can try to swipe over your screen
+          </div>
         </div>
-      </div>
+      </transition>
       <div class="full-height canvas-wrapper" :class="{ opaque: stage > 1 }" id="canvas-wrapper" @touchstart="startErasing">
         <vue-eraser
           ref="vueEraser"
@@ -19,7 +21,7 @@
         />
         <transition name="fade">
           <div class="centered text">
-            Pay attention to the big screen while you swipe on the screen
+            <img src="../assets/images/logo-black.svg" />
           </div>
         </transition>
       </div>
@@ -34,6 +36,7 @@ import vueEraser from "vue-eraser"
 export default {
   name: 'Onboarding',
   props: {
+    goToWaiting: Function
   },
   data() {
     return { stage: 1 }
@@ -48,6 +51,9 @@ export default {
     },
     complete() {
       this.$socket.emit("client_erase_block")
+      if (process.env.NODE_ENV === "development") {
+        setTimeout(() => { this.goToWaiting() })
+      }
     }
   }
 }
@@ -59,6 +65,10 @@ export default {
   margin: 0 auto;
   height: 100%;
   background: #2B2A2D;
+}
+
+.wrapper.fade-enter {
+  opacity: 1;
 }
 
 .canvas-wrapper {

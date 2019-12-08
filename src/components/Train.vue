@@ -1,5 +1,5 @@
 <template>
-  <div class="wrapper" @touchmove="cut" @touchstart="explode">
+  <div class="wrapper" @touchmove="cut">
     <div class="inner-wrapper" :style="{ backgroundImage: innerWrapperBackground }">
       <div class="centered-horizontal train" />
       <div class="centered-horizontal" id="carriage-container" ondragstart="return false;" ondrop="return false;">
@@ -129,7 +129,7 @@ export default {
       const distance = Math.sqrt(diffX * diffX + diffY * diffY)
 
       if (distance < TOUCH_DISTANCE) {
-        if (this.progress > 0.95) {
+        if (this.progress > 0.9) {
           this.progress = 1
         } else {
           this.progress = this.progress + STEP
@@ -137,14 +137,12 @@ export default {
       }
     },
     explode() {
-      if (this.progress >= 1) {
-        const container = document.getElementById('carriage-container')
-        container.style.height = container.offsetHeight + 'px'
-        const { carriage1, carriage2 } = this.$refs
-        const timeline = new TimelineLite()
-        timeline.to(carriage1, 2, { y: 600, x: -300, rotate: -30, scale: 0.5, rotateX: 90, rotateY: 90 })
-        timeline.to(carriage2, 2, { y: 600, x: +300, rotate: 50, scale: 0.2, rotateX: 90, rotateY: 90 }, 0)
-      }
+      const container = document.getElementById('carriage-container')
+      container.style.height = container.offsetHeight + 'px'
+      const { carriage1, carriage2 } = this.$refs
+      const timeline = new TimelineLite()
+      timeline.to(carriage1, 2, { y: 600, x: -300, rotate: -30, scale: 0.5, rotateX: 90, rotateY: 90 })
+      timeline.to(carriage2, 2, { y: 600, x: +300, rotate: 50, scale: 0.2, rotateX: 90, rotateY: 90 }, 0)
     },
     clipPath(right = false) {
       const cutPointX = this.top * 100 - (this.top - this.bottom) * 100 * this.progress
@@ -159,6 +157,7 @@ export default {
   },
   sockets: {
     cut_piece_fall() {
+      console.log("cut piece fall")
       this.explode()
     }
   },
@@ -176,6 +175,7 @@ export default {
 <style scoped>
 .wrapper {
   background-image: url("../assets/images/train-bg.jpg");
+  background-position: bottom;
   height: 100%;
 }
 
