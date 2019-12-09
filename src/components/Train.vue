@@ -28,11 +28,14 @@
 import { TimelineLite } from 'gsap'
 
 export default {
+  name: 'Train',
   props: {
     top: Number,
     bottom: Number,
     cutIndex: Number,
-    segmentIndex: Number
+    segmentIndex: Number,
+    goToWaiting: Function,
+    development: Boolean
   },
   data() {
     return {
@@ -44,8 +47,12 @@ export default {
   },
   watch: {
     progress(newProgress) {
-      if (newProgress === 1) {
+      if (newProgress >= 1) {
         this.$socket.emit("client_cut", this.cutIndex)
+        if (this.development) {
+          setTimeout(() => { this.explode() }, 1000)
+          setTimeout(() => { this.goToWaiting() }, 3000)
+        }
       }
     }
   },
@@ -157,7 +164,6 @@ export default {
   },
   sockets: {
     cut_piece_fall() {
-      console.log("cut piece fall")
       this.explode()
     }
   },

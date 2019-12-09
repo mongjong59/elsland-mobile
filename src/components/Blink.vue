@@ -8,7 +8,7 @@ export default {}
 
 <style scoped>
 .blink {
-  animation: blink 1s ease-in forwards;
+  animation: blink 1s step-start forwards;
   height: 100%;
   width: 100%;
 }
@@ -20,7 +20,13 @@ export default {}
   20% {
     background: white;
   }
+  30% {
+    background: #2B2A2D;
+  }
   50% {
+    background: white;
+  }
+  60% {
     background: #2B2A2D;
   }
   70% {

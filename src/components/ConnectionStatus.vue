@@ -167,7 +167,7 @@ export default {
     opacity: 100%;
   }
   100% {
-    transform: translateX(-50%) translateY(-90px) scale(0);
+    transform: translateX(-50%) translateY(-80px) scale(0.2);
     opacity: 0%;
   }
 }

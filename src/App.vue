@@ -3,36 +3,40 @@
     <transition name="fade" mode="out-in">
       <ConnectionStatus v-if="isCurrentScene('CONNECTION_STATUS')" :goToNextScene="goToNextScene" :development="development" />
       <Onboarding v-if="isCurrentScene('ONBOARDING')" :goToWaiting="goToWaiting" />
-      <Train v-if="isCurrentScene('TRAIN')" v-bind="propsTrain" />
+      <Train v-if="isCurrentScene('TRAIN')" v-bind="propsTrain" :goToWaiting="goToWaiting" :development="development" />
       <Waiting v-if="waiting" />
+      <Screens v-if="isCurrentScene('SCREENS')" :goToWaiting="goToWaiting" :development="development" />
     </transition>
     <button v-if="development" class="debug-button" @touchstart="goToNextScene">Jump to Next Scene</button>
   </div>
 </template>
 
 <script>
+import Waiting from './components/Waiting.vue'
 import ConnectionStatus from './components/ConnectionStatus.vue'
 import Onboarding from './components/Onboarding.vue'
 import Train from './components/Train.vue'
-import Waiting from './components/Waiting.vue'
+import Screens from './components/Screens.vue'
 
-const SCENES = {
-  CONNECTION_STATUS: "CONNECTION_STATUS",
-  ONBOARDING: "ONBOARDING",
-  TRAIN: "TRAIN"
-}
+const SCENES = [
+  "CONNECTION_STATUS",
+  "ONBOARDING",
+  "TRAIN",
+  "SCREENS"
+]
 
 export default {
   name: 'App',
   components: {
+    Waiting,
     ConnectionStatus,
     Onboarding,
     Train,
-    Waiting
+    Screens
   },
   data: function() {
     return {
-      scene: SCENES.CONNECTION_STATUS,
+      scene: SCENES[0],
       connected: false,
       propsTrain: {
         top: 0.3,
@@ -47,17 +51,16 @@ export default {
   methods: {
     goToScene(name) {
       this.waiting = false
-      this.scene = SCENES[name]
+      this.scene = name
     },
     goToNextScene() {
-      const i = Object.values(SCENES).indexOf(this.scene)
-      const key = Object.keys(SCENES)[i + 1]
-      this.goToScene(key)
+      const i = SCENES.indexOf(this.scene)
+      this.goToScene(SCENES[i + 1])
     },
     goToWaiting() {
       this.waiting = true
       if (this.development) {
-        setTimeout(() => { this.goToNextScene() }, 2000)
+        setTimeout(() => { this.goToNextScene() }, 3000)
       }
     },
     isCurrentScene(name) {
@@ -71,6 +74,8 @@ export default {
     window.addEventListener('keydown', function(e) {
       e.keyCode === 32 && _this.goToNextScene()
     })
+
+    // this.goToScene("SCREENS")
   },
   sockets: {
     cut_scene(data) {
@@ -82,7 +87,11 @@ export default {
       }
       this.goToScene("TRAIN")
     },
+    screen_city_scene() {
+      this.goToScene("SCREENS")
+    },
     waiting_page() {
+      if (this.development) return
       this.goToWaiting()
     }
   }
