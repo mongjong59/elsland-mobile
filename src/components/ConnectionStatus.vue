@@ -115,7 +115,7 @@ export default {
 }
 
 .silhouette {
-  z-index: 2;
+  z-index: 9;
   width: 32%;
   bottom: 0;
 }

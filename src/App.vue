@@ -6,6 +6,7 @@
       <Train v-if="isCurrentScene('TRAIN')" v-bind="propsTrain" :goToWaiting="goToWaiting" :development="development" />
       <Waiting v-if="waiting" />
       <Screens v-if="isCurrentScene('SCREENS')" :goToWaiting="goToWaiting" :development="development" />
+      <Shadows v-if="isCurrentScene('SHADOWS')" :goToWaiting="goToWaiting" :development="development" :shadowIndex="shadowIndex" />
     </transition>
     <button v-if="development" class="debug-button" @touchstart="goToNextScene">Jump to Next Scene</button>
   </div>
@@ -17,12 +18,14 @@ import ConnectionStatus from './components/ConnectionStatus.vue'
 import Onboarding from './components/Onboarding.vue'
 import Train from './components/Train.vue'
 import Screens from './components/Screens.vue'
+import Shadows from './components/Shadows.vue'
 
 const SCENES = [
   "CONNECTION_STATUS",
   "ONBOARDING",
   "TRAIN",
-  "SCREENS"
+  "SCREENS",
+  "SHADOWS"
 ]
 
 export default {
@@ -32,7 +35,8 @@ export default {
     ConnectionStatus,
     Onboarding,
     Train,
-    Screens
+    Screens,
+    Shadows
   },
   data: function() {
     return {
@@ -44,7 +48,9 @@ export default {
         id: 0,
         segmentIndex: 0
       },
-      development: process.env.NODE_ENV !== 'production',
+      shadowIndex: 0,
+      // development: process.env.NODE_ENV === 'production',
+      development: false,
       waiting: false
     }
   },
@@ -75,7 +81,7 @@ export default {
       e.keyCode === 32 && _this.goToNextScene()
     })
 
-    // this.goToScene("SCREENS")
+    // this.goToScene("SHADOWS")
   },
   sockets: {
     cut_scene(data) {
@@ -89,6 +95,12 @@ export default {
     },
     screen_city_scene() {
       this.goToScene("SCREENS")
+    },
+    shadow_scene(data) {
+      this.goToScene("SHADOWS")
+      if (!data.index) return
+      console.log(data.index)
+      this.shadowIndex = data.index
     },
     waiting_page() {
       if (this.development) return

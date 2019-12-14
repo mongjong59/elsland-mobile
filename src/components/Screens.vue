@@ -1,7 +1,9 @@
 <template>
   <div class="wrapper">
     <transition name="collapse">
-      <div v-if="!buttonPressed" class="screen" />
+      <div v-if="!buttonPressed" class="screen-wrapper">
+        <img class="screen" src="../assets/images/screens-screen.jpg" />
+      </div>
     </transition>
     <div class="remote-control-wrapper">
       <img :class="{ inclined: buttonDown }" class="remote-control" :src="remoteControlImg" />
@@ -14,7 +16,8 @@
 export default {
   name: 'Screens',
   props: {
-    development: Boolean
+    development: Boolean,
+    goToWaiting: Function
   },
   data() {
     return {
@@ -28,6 +31,7 @@ export default {
       this.$socket.emit('client_turnoff_screen')
       this.buttonDown = true
       this.buttonPressed = true
+      this.development && setTimeout(() => { this.goToWaiting() }, 2000)
     },
     onButtonUp() {
       this.buttonDown = false
@@ -48,11 +52,15 @@ export default {
   height: 100%;
 }
 
-.screen {
+.screen-wrapper {
+  padding-top: 50%;
   transition: transform 1s cubic-bezier(0.75, 0, 1, 0.25);
-  background: url('../assets/images/screens-bg.png');
   background-size: cover;
   height: 100%;
+}
+
+.screen {
+  width: 100%;
 }
 
 .remote-control-wrapper {
