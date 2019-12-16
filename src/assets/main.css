@@ -40,6 +40,10 @@ html, body, .full-height {
   transition: opacity 1.5s;
 }
 
+.wrapper.fade-enter-active {
+  transition-delay: 1.5s;
+}
+
 .fade-enter, .fade-leave-to {
   opacity: 0;
 }

@@ -1,14 +1,17 @@
 <template>
   <div id="app">
     <transition name="fade" mode="out-in">
-      <ConnectionStatus v-if="isCurrentScene('CONNECTION_STATUS')" :goToNextScene="goToNextScene" :development="development" />
-      <Onboarding v-if="isCurrentScene('ONBOARDING')" :goToWaiting="goToWaiting" />
-      <Train v-if="isCurrentScene('TRAIN')" v-bind="propsTrain" :goToWaiting="goToWaiting" :development="development" />
-      <Screens v-if="isCurrentScene('SCREENS')" :goToWaiting="goToWaiting" :development="development" />
-      <Shadows v-if="isCurrentScene('SHADOWS')" :shadowIndex="shadowIndex" :goToWaiting="goToWaiting" :development="development" />
-      <Staircase v-if="isCurrentScene('STAIRCASE')" v-bind="propsStaircase" :goToWaiting="goToWaiting" :development="development" />
+      <ConnectionStatus v-if="isScene('CONNECTION_STATUS')" :goToNextScene="goToNextScene" :development="development" />
+      <Onboarding v-if="isScene('ONBOARDING')" :goToWaiting="goToWaiting" />
+      <Train v-if="isScene('TRAIN')" v-bind="propsTrain" :goToWaiting="goToWaiting" :development="development" />
+      <Screens v-if="isScene('SCREENS')" :goToWaiting="goToWaiting" :development="development" />
+      <Shadows v-if="isScene('SHADOWS')" :shadowIndex="shadowIndex" :goToWaiting="goToWaiting" :development="development" />
+      <Staircase v-if="isScene('STAIRCASE')" v-bind="propsStaircase" :goToWaiting="goToWaiting" :development="development" />
+    </transition>
+    <transition name="fade">
       <Waiting v-if="waiting" />
     </transition>
+
     <div v-if="countdown < 16 && countdown > 0" class="countdown">{{ countdown }}</div>
     <button v-if="development" class="debug-button" @touchstart="goToNextScene">Jump to Next Scene</button>
     <Blink v-if="blinking" />
@@ -70,10 +73,8 @@ export default {
   },
   methods: {
     goToScene(name) {
-      this.waiting = false
-      this.blink()
       this.scene = name
-      this.countdown = 30
+      if (name === "ONBOARDING") this.blink()
     },
     goToNextScene() {
       const i = SCENES.indexOf(this.scene)
@@ -82,14 +83,25 @@ export default {
     goToWaiting() {
       this.waiting = true
       this.countdown = -1
+      this.goToNextScene()
       if (this.development) {
-        setTimeout(() => { this.goToNextScene() }, 3000)
+        setTimeout(() => { this.stopWaiting() }, 3000)
       }
     },
-    isCurrentScene(name) {
-      let currentScene = this.scene
-      if (this.waiting) currentScene = "WAITING"
-      return name === currentScene
+    switchToScene(name) {
+      this.goToScene(name)
+      this.stopWaiting()
+    },
+    stopWaiting() {
+      this.waiting = false
+      setTimeout(() => { this.blink() }, 800)
+      this.countdown = 30
+    },
+    isScene(name) {
+      return name === this.scene
+    },
+    notWaiting() {
+      return !this.waiting
     },
     blink() {
       this.blinking = true
@@ -106,8 +118,8 @@ export default {
     window.addEventListener('keydown', function(e) {
       e.keyCode === 32 && _this.goToNextScene()
     })
-    // setInterval(() => { if (this.countdown > 0) this.countdown -= 1 }, 1000)
-    this.goToScene("STAIRCASE")
+    setInterval(() => { if (this.countdown > 0) this.countdown -= 1 }, 1000)
+    // this.goToScene("STAIRCASE")
   },
   sockets: {
     cut_scene(data) {
@@ -117,18 +129,18 @@ export default {
         cutIndex: data.index,
         segmentIndex: data.segment_index
       }
-      this.goToScene("TRAIN")
+      this.switchToScene("TRAIN")
     },
     screen_city_scene() {
-      this.goToScene("SCREENS")
+      this.switchToScene("SCREENS")
     },
     shadow_scene(data) {
-      this.goToScene("SHADOWS")
+      this.switchToScene("SHADOWS")
       if (!data.index) return
       this.shadowIndex = data.index
     },
     staircase_scene(data) {
-      this.goToScene("STAIRCASE")
+      this.switchToScene("STAIRCASE")
       const screenIndex = data.screen_index
       const lightIndex = data.light_index
       this.propsStaircase = { screenIndex, lightIndex }

@@ -15,9 +15,18 @@ export default {
 
 <style scoped>
 .wrapper {
+  z-index: 999;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  background: black;
   font-size: 1.2rem;
   margin: 0 auto;
   height: 100%;
+}
+
+.wrapper.fade-enter-active {
+  transition-delay: 1.5s;
 }
 
 .container {
