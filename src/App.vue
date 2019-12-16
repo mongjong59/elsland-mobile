@@ -4,43 +4,52 @@
       <ConnectionStatus v-if="isCurrentScene('CONNECTION_STATUS')" :goToNextScene="goToNextScene" :development="development" />
       <Onboarding v-if="isCurrentScene('ONBOARDING')" :goToWaiting="goToWaiting" />
       <Train v-if="isCurrentScene('TRAIN')" v-bind="propsTrain" :goToWaiting="goToWaiting" :development="development" />
-      <Waiting v-if="waiting" />
       <Screens v-if="isCurrentScene('SCREENS')" :goToWaiting="goToWaiting" :development="development" />
-      <Shadows v-if="isCurrentScene('SHADOWS')" :goToWaiting="goToWaiting" :development="development" :shadowIndex="shadowIndex" />
+      <Shadows v-if="isCurrentScene('SHADOWS')" :shadowIndex="shadowIndex" :goToWaiting="goToWaiting" :development="development" />
+      <Staircase v-if="isCurrentScene('STAIRCASE')" v-bind="propsStaircase" :goToWaiting="goToWaiting" :development="development" />
+      <Waiting v-if="waiting" />
     </transition>
+    <div v-if="countdown < 16 && countdown > 0" class="countdown">{{ countdown }}</div>
     <button v-if="development" class="debug-button" @touchstart="goToNextScene">Jump to Next Scene</button>
+    <Blink v-if="blinking" />
   </div>
 </template>
 
 <script>
 import Waiting from './components/Waiting.vue'
+import Blink from './components/Blink.vue'
 import ConnectionStatus from './components/ConnectionStatus.vue'
 import Onboarding from './components/Onboarding.vue'
 import Train from './components/Train.vue'
 import Screens from './components/Screens.vue'
 import Shadows from './components/Shadows.vue'
+import Staircase from './components/Staircase.vue'
 
 const SCENES = [
   "CONNECTION_STATUS",
   "ONBOARDING",
   "TRAIN",
   "SCREENS",
-  "SHADOWS"
+  "SHADOWS",
+  "STAIRCASE"
 ]
 
 export default {
   name: 'App',
   components: {
     Waiting,
+    Blink,
     ConnectionStatus,
     Onboarding,
     Train,
     Screens,
-    Shadows
+    Shadows,
+    Staircase
   },
-  data: function() {
+  data() {
     return {
       scene: SCENES[0],
+      countdown: 0,
       connected: false,
       propsTrain: {
         top: 0.3,
@@ -49,15 +58,22 @@ export default {
         segmentIndex: 0
       },
       shadowIndex: 0,
-      // development: process.env.NODE_ENV === 'production',
-      development: false,
-      waiting: false
+      propsStaircase: {
+        screenIndex: 0,
+        lightIndex: 0
+      },
+      waiting: false,
+      blinking: false,
+      development: true
+      // development: process.env.NODE_ENV === 'production'
     }
   },
   methods: {
     goToScene(name) {
       this.waiting = false
+      this.blink()
       this.scene = name
+      this.countdown = 30
     },
     goToNextScene() {
       const i = SCENES.indexOf(this.scene)
@@ -65,6 +81,7 @@ export default {
     },
     goToWaiting() {
       this.waiting = true
+      this.countdown = -1
       if (this.development) {
         setTimeout(() => { this.goToNextScene() }, 3000)
       }
@@ -73,6 +90,15 @@ export default {
       let currentScene = this.scene
       if (this.waiting) currentScene = "WAITING"
       return name === currentScene
+    },
+    blink() {
+      this.blinking = true
+      setTimeout(() => { this.blinking = false }, 1000)
+    }
+  },
+  watch: {
+    countdown(val) {
+      val === 0 && this.goToWaiting()
     }
   },
   mounted() {
@@ -80,8 +106,8 @@ export default {
     window.addEventListener('keydown', function(e) {
       e.keyCode === 32 && _this.goToNextScene()
     })
-
-    // this.goToScene("SHADOWS")
+    // setInterval(() => { if (this.countdown > 0) this.countdown -= 1 }, 1000)
+    this.goToScene("STAIRCASE")
   },
   sockets: {
     cut_scene(data) {
@@ -99,12 +125,17 @@ export default {
     shadow_scene(data) {
       this.goToScene("SHADOWS")
       if (!data.index) return
-      console.log(data.index)
       this.shadowIndex = data.index
+    },
+    staircase_scene(data) {
+      this.goToScene("STAIRCASE")
+      const screenIndex = data.screen_index
+      const lightIndex = data.light_index
+      this.propsStaircase = { screenIndex, lightIndex }
     },
     waiting_page() {
       if (this.development) return
-      this.goToWaiting()
+      this.goToNextScene()
     }
   }
 }
@@ -125,6 +156,15 @@ export default {
 #content {
   width: 100%;
   height: 100%;
+}
+
+.countdown {
+  transform: translateX(-50%);
+  left: 50%;
+  bottom: 0;
+  font-size: 1.6rem;
+  z-index: 999;
+  position: absolute;
 }
 
 .debug-button {

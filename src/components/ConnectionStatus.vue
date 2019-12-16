@@ -20,18 +20,12 @@
         </transition>
       </div>
     </transition>
-    <Blink v-if="stage === 6" />
   </div>
 </template>
 
 <script>
-import Blink from "./Blink"
-
 export default {
   name: 'ConnectionStatus',
-  components: {
-    Blink
-  },
   props: {
     goToNextScene: Function,
     development: Boolean

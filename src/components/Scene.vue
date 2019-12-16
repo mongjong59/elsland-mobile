@@ -1,9 +1,10 @@
 <template>
+  
 </template>
 
 <script>
 export default {
-  name: 'Connecting',
+  name: 'Scene',
   props: {
     // msg: String
   }

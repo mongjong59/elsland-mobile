@@ -36,7 +36,7 @@ import vueEraser from "vue-eraser"
 export default {
   name: 'Onboarding',
   props: {
-    goToWaiting: Function
+    goToWaiting: Function,
   },
   data() {
     return { stage: 1 }
@@ -47,9 +47,9 @@ export default {
   methods: {
     startErasing() {
       this.stage = 2
-      new NoSleep().enable()
     },
     complete() {
+      new NoSleep().enable()
       this.$socket.emit("client_erase_block")
       if (process.env.NODE_ENV === "development") {
         setTimeout(() => { this.goToWaiting() })

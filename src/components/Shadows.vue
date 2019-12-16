@@ -14,8 +14,11 @@
 
 <script>
 export default {
+  name: 'Shadows',
   props: {
-    shadowIndex: Number
+    shadowIndex: Number,
+    development: Boolean,
+    goToWaiting: Function
   },
   data() {
     return {
@@ -23,7 +26,8 @@ export default {
       prevPosition: 0,
       screenRodOffset: 0,
       screenShadowOffset: 0,
-      screenCurtainWidth: 0
+      screenCurtainWidth: 0,
+      bgWidth: 0
     }
   },
   methods: {
@@ -35,23 +39,33 @@ export default {
       const position = e.targetTouches[0].pageY
       const diff = position - this.prevPosition
       if (diff <= 0) return
-      this.progress += diff / 2000
+      this.progress += diff / 700
       if (this.progress > 1) this.progress = 1
       this.prevPosition = position
     },
     dragEnd(e) {
-      this.$socket.emit('client_moveup_curtain', { index: this.shadowIndex, progress: this.progress })
+      this.$socket.emit('client_moveup_curtain', {
+        index: this.shadowIndex,
+        progress: this.progress
+      })
+      if (this.development && this.progress >= 1) {
+        setTimeout(() => { this.goToWaiting() }, 1000)
+      }
     }
   },
   mounted() {
-    const IMG_WIDTH = 1125
-    const IMG_ROD_OFFSET = 800
-    const IMG_SHADOW_OFFSET = 900
-    const IMG_CURTAIN_WIDTH = 840
-    const screenWidth = screen.width
-    this.screenRodOffset = screen.width / IMG_WIDTH * IMG_ROD_OFFSET
-    this.screenShadowOffset = screen.width / IMG_WIDTH * IMG_SHADOW_OFFSET
-    this.screenCurtainWidth = screen.width / IMG_WIDTH * IMG_CURTAIN_WIDTH
+    const img = new Image()
+    img.src = require("../assets/images/shadows-bg.jpg")
+    img.onload = () => {
+      this.bgWidth = img.width
+      const IMG_ROD_OFFSET = 800
+      const IMG_SHADOW_OFFSET = 900
+      const IMG_CURTAIN_WIDTH = 840
+      const screenWidth = screen.width
+      this.screenRodOffset = screen.width / this.bgWidth * IMG_ROD_OFFSET
+      this.screenShadowOffset = screen.width / this.bgWidth * IMG_SHADOW_OFFSET
+      this.screenCurtainWidth = screen.width / this.bgWidth * IMG_CURTAIN_WIDTH
+    }
   }
 }
 </script>

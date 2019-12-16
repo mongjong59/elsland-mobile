@@ -13,7 +13,7 @@ const development = process.env.NODE_ENV === "development"
 Vue.use(
   new VueSocketIO({
     debug: true,
-    connection: development ? 'http://10.23.10.76:8000/web-client' : '/web-client'
+    connection: development ? 'http://10.18.78.47:8000/web-client' : '/web-client'
   }),
   vueEraser
 )

@@ -3,7 +3,7 @@
 </template>
 
 <script>
-export default {}
+export default { name: 'Blink' }
 </script>
 
 <style scoped>
@@ -11,6 +11,8 @@ export default {}
   animation: blink 1s step-start forwards;
   height: 100%;
   width: 100%;
+  top: 0;
+  position: absolute;
 }
 
 @keyframes blink {
