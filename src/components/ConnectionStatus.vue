@@ -1,25 +1,25 @@
 <template>
   <div class="wrapper">
-    <transition name="fade" mode="out-in">
-      <h1 class="centered" v-if="stage === 1">Connecting...</h1>
-      <div v-if="stage >= 2">
-        <transition name="fade" mode="out-in">
-          <img class="welcome" v-if="stage === 2" src="../assets/images/connection-status-welcome.svg" />
-          <p class="instruction" v-if="stage === 3">
+    <transition-group name="fade" mode="out-in">
+      <h1 class="centered" v-show="stage === 1" key="1">Connecting...</h1>
+      <div v-show="stage >= 2" key="2">
+        <transition-group name="fade" mode="out-in">
+          <img class="welcome" v-show="stage === 2" src="../assets/images/connection-status-welcome.svg" key="1" />
+          <p class="instruction" v-show="stage === 3" key="2">
             Most of the experience will be on the BIG SCREEN.
             <br />
             <br />
             When you notice yellow particles on the screen, look back onto your phone.
           </p>
-        </transition>
+        </transition-group>
         <transition name="entrance-animation" delay="5000">
-          <img v-if="stage <= 4" class="entrance" src="../assets/images/connection-status-entry.png" />
+          <img v-show="stage <= 4" class="entrance" src="../assets/images/connection-status-entry.png" />
         </transition>
         <transition name="silhouette-animation">
-          <img v-if="stage <= 4" class="silhouette" src="../assets/images/connection-status-silhouette.png" />
+          <img v-show="stage <= 4" class="silhouette" src="../assets/images/connection-status-silhouette.png" />
         </transition>
       </div>
-    </transition>
+    </transition-group>
   </div>
 </template>
 
@@ -133,22 +133,22 @@ export default {
 
 @keyframes blink {
   0%  {
-    opacity: 100%;
+    opacity: 1;
   }
   5%  {
-    opacity: 90%;
+    opacity: 0.9;
   }
   7%  {
-    opacity: 80%;
+    opacity: 0.8;
   }
   9%  {
-    opacity: 70%;
+    opacity: 0.7;
   }
   11%  {
-    opacity: 80%;
+    opacity: 0.8;
   }
   15%  {
-    opacity: 100%;
+    opacity: 1;
   }
 }
 

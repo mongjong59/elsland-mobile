@@ -2,10 +2,15 @@
   <div id="app">
     <transition name="fade" mode="out-in">
       <ConnectionStatus v-if="isScene('CONNECTION_STATUS')" :goToNextScene="goToNextScene" :development="development" />
-      <Onboarding v-if="isScene('ONBOARDING')" :goToWaiting="goToWaiting" />
+
+      <Onboarding v-if="isScene('ONBOARDING')" :goToWaiting="goToWaiting" :stopCountdown="stopCountdown" />
+
       <Train v-if="isScene('TRAIN')" v-bind="propsTrain" :goToWaiting="goToWaiting" :development="development" />
+
       <Screens v-if="isScene('SCREENS')" :goToWaiting="goToWaiting" :development="development" />
+
       <Shadows v-if="isScene('SHADOWS')" :shadowIndex="shadowIndex" :goToWaiting="goToWaiting" :development="development" />
+
       <Staircase v-if="isScene('STAIRCASE')" v-bind="propsStaircase" :goToWaiting="goToWaiting" :development="development" />
     </transition>
     <transition name="fade">
@@ -67,14 +72,16 @@ export default {
       },
       waiting: false,
       blinking: false,
-      development: true
+      development: false
       // development: process.env.NODE_ENV === 'production'
     }
   },
   methods: {
     goToScene(name) {
+      console.log("going to " + name)
       this.scene = name
-      if (name === "ONBOARDING") this.blink()
+      if (name !== "ONBOARDING") return
+      setTimeout(() => { this.blink() }, 1500)
     },
     goToNextScene() {
       const i = SCENES.indexOf(this.scene)
@@ -82,7 +89,7 @@ export default {
     },
     goToWaiting() {
       this.waiting = true
-      this.countdown = -1
+      this.stopCountdown()
       this.goToNextScene()
       if (this.development) {
         setTimeout(() => { this.stopWaiting() }, 3000)
@@ -92,10 +99,13 @@ export default {
       this.goToScene(name)
       this.stopWaiting()
     },
+    stopCountdown() {
+      this.countdown = -1
+    },
     stopWaiting() {
       this.waiting = false
-      setTimeout(() => { this.blink() }, 800)
-      this.countdown = 30
+      setTimeout(() => { this.blink() }, 700)
+      this.countdown = 50
     },
     isScene(name) {
       return name === this.scene
@@ -118,7 +128,9 @@ export default {
     window.addEventListener('keydown', function(e) {
       e.keyCode === 32 && _this.goToNextScene()
     })
-    setInterval(() => { if (this.countdown > 0) this.countdown -= 1 }, 1000)
+    setInterval(() => {
+      if (this.countdown > 0) this.countdown -= 1
+    }, 1000)
     // this.goToScene("STAIRCASE")
   },
   sockets: {
@@ -147,7 +159,7 @@ export default {
     },
     waiting_page() {
       if (this.development) return
-      this.goToNextScene()
+      this.goToWaiting()
     }
   }
 }

@@ -72,6 +72,7 @@ export default {
     dragEnd(e) {
       let progress = this.progress
       if (this.compeleted) progress = 1
+      console.log(progress)
       this.$socket.emit('client_turnon_light', {
         screen_index: this.screenIndex,
         light_index: this.lightIndex,
