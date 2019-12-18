@@ -5,20 +5,26 @@
 
       <Onboarding v-if="isScene('ONBOARDING')" :goToWaiting="goToWaiting" :stopCountdown="stopCountdown" />
 
-      <Train v-if="isScene('TRAIN')" v-bind="propsTrain" :goToWaiting="goToWaiting" :development="development" />
+      <Train v-if="isScene('TRAIN')" v-bind="propsTrain" :goToWaiting="goToWaiting" :stopCountdown="stopCountdown" :development="development" />
 
-      <Screens v-if="isScene('SCREENS')" :goToWaiting="goToWaiting" :development="development" />
+      <Screens v-if="isScene('SCREENS')" :goToWaiting="goToWaiting" :stopCountdown="stopCountdown" :development="development" />
 
-      <Shadows v-if="isScene('SHADOWS')" :shadowIndex="shadowIndex" :goToWaiting="goToWaiting" :development="development" />
+      <Shadows v-if="isScene('SHADOWS')" :shadowIndex="shadowIndex" :goToWaiting="goToWaiting" :stopCountdown="stopCountdown" :development="development" />
 
-      <Staircase v-if="isScene('STAIRCASE')" v-bind="propsStaircase" :goToWaiting="goToWaiting" :development="development" />
+      <Staircase v-if="isScene('STAIRCASE')" v-bind="propsStaircase" :goToWaiting="goToWaiting" :stopCountdown="stopCountdown" :development="development" />
     </transition>
     <transition name="fade">
       <Waiting v-if="waiting" />
     </transition>
 
-    <div v-if="countdown < 16 && countdown > 0" class="countdown">{{ countdown }}</div>
-    <button v-if="development" class="debug-button" @touchstart="goToNextScene">Jump to Next Scene</button>
+    <div v-if="countdown < 16 && countdown > 0"
+      class="countdown"
+    >{{ countdown }}</div>
+    <button v-if="development"
+      class="debug-button"
+      @touchstart="goToNextScene"
+      @click="goToNextScene"
+    >Jump to Next Scene</button>
     <Blink v-if="blinking" />
   </div>
 </template>
@@ -129,7 +135,7 @@ export default {
       e.keyCode === 32 && _this.goToNextScene()
     })
     setInterval(() => {
-      if (this.countdown > 0) this.countdown -= 1
+      // if (this.countdown > 0) this.countdown -= 1
     }, 1000)
     // this.goToScene("STAIRCASE")
   },
@@ -175,11 +181,7 @@ export default {
   text-align: center;
   font-size: 62.5%;
   height: 100%;
-}
-
-#content {
-  width: 100%;
-  height: 100%;
+  position: relative;
 }
 
 .countdown {

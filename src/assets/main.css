@@ -1,7 +1,14 @@
 html {
+  background: black;
   color: white;
   overflow: hidden;
   line-height: 1.5;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+body {
+  width: 100%;
 }
 
 div {

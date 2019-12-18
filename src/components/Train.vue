@@ -1,5 +1,5 @@
 <template>
-  <div class="wrapper" @touchmove="cut">
+  <div class="wrapper" @touchmove="cut" @mousemove="cut">
     <div class="inner-wrapper" :style="{ backgroundImage: innerWrapperBackground }">
       <div class="centered-horizontal train" />
       <div class="centered-horizontal" id="carriage-container" ondragstart="return false;" ondrop="return false;">
@@ -121,7 +121,9 @@ export default {
 
       const container = document.getElementById('carriage-container')
       const rect = container.getBoundingClientRect()
-      const touch = e.targetTouches[0]
+      let touch = e
+      if (e.targetTouches) touch = e.targetTouches[0]
+
 
       const containerWidth = container.offsetWidth
       const gapTopX = rect.left + containerWidth * this.top

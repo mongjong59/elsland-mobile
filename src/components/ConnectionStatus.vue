@@ -1,9 +1,8 @@
 <template>
-  <div class="wrapper">
-    <transition-group name="fade" mode="out-in">
+    <transition-group tag="div" class="wrapper" name="fade" mode="out-in">
       <h1 class="centered" v-show="stage === 1" key="1">Connecting...</h1>
-      <div v-show="stage >= 2" key="2">
-        <transition-group name="fade" mode="out-in">
+      <div class="text" v-show="stage >= 2" key="2">
+        <transition-group tag="div" name="fade" mode="out-in">
           <img class="welcome" v-show="stage === 2" src="../assets/images/connection-status-welcome.svg" key="1" />
           <p class="instruction" v-show="stage === 3" key="2">
             Most of the experience will be on the BIG SCREEN.
@@ -20,7 +19,6 @@
         </transition>
       </div>
     </transition-group>
-  </div>
 </template>
 
 <script>
@@ -71,12 +69,19 @@ export default {
 
 <style scoped>
 .wrapper {
-  background-image: url("../assets/images/connection-status-bg.png");
+  background: url("../assets/images/connection-status-bg.png");
+  background-size: cover;
   height: 100%;
 }
 
 .wrapper.fade-leave-to {
   opacity: 1;
+}
+
+.text {
+  position: relative;
+  height: 100%;
+  width: 100%;
 }
 
 .welcome, .instruction, .entrance, .silhouette {

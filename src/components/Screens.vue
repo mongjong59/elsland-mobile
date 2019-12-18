@@ -7,7 +7,13 @@
     </transition>
     <div class="remote-control-wrapper">
       <img :class="{ inclined: buttonDown }" class="remote-control" :src="remoteControlImg" />
-      <div class="button centered-horizontal" @touchstart="onButtonDown" @touchend="onButtonUp" />
+      <div
+        class="button centered-horizontal"
+        @touchstart="onButtonDown"
+        @touchend="onButtonUp"
+        @mousedown="onButtonDown"
+        @mouseup="onButtonUp"
+      />
     </div>
   </div>
 </template>
@@ -50,6 +56,8 @@ export default {
 .wrapper {
   background: #220219;
   height: 100%;
+  position: relative;
+  overflow: hidden;
 }
 
 .screen-wrapper {

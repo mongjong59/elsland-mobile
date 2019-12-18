@@ -8,6 +8,7 @@
         @touchstart="dragStart"
         @touchmove="dragMove"
         @touchend="dragEnd"
+        @click="dragMove"
         class="knob"
         :style="{ transform: knobTranslateY }"
         src="../assets/images/staircase-knob.png"
@@ -54,20 +55,28 @@ export default {
   },
   methods: {
     dragStart(e) {
-      this.prevPosition = e.targetTouches[0].pageY
+      let touch = e
+      if (e.targetTouches) touch = e.targetTouches[0]
+      this.prevPosition = touch.pageY
     },
     dragMove(e) {
       if (this.progress >= 1 || this.compeleted) return
-      const position = e.targetTouches[0].pageY
-      if (position < this.screenKnobHeight / 2) this.complete()
-      const diff = position - this.prevPosition
-      if (diff >= 0) return
-      const diffBottom = this.screenGrooveBottom - position
-      if (diffBottom <= 0) return
-      const nextProgress = diffBottom / this.screenMaxDistance
-      if (nextProgress > this.progress) this.progress = nextProgress
-      if (this.progress > 1) this.progress = 1
-      this.prevPosition = position
+      let touch = e
+      if (e.targetTouches) {
+        touch = e.targetTouches[0]
+        const position = touch.pageY
+        if (position < this.screenKnobHeight / 2) this.complete()
+        const diff = position - this.prevPosition
+        if (diff >= 0) return
+        const diffBottom = this.screenGrooveBottom - position
+        if (diffBottom <= 0) return
+        const nextProgress = diffBottom / this.screenMaxDistance
+        if (nextProgress > this.progress) this.progress = nextProgress
+        if (this.progress > 1) this.progress = 1
+        this.prevPosition = position
+      } else {
+        this.progress = 1
+      }
     },
     dragEnd(e) {
       let progress = this.progress

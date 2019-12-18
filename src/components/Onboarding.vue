@@ -10,7 +10,12 @@
           </div>
         </div>
       </transition>
-      <div class="full-height canvas-wrapper" :class="{ opaque: stage > 1 }" id="canvas-wrapper" @touchstart="startErasing">
+      <div
+        class="full-height canvas-wrapper" :class="{ opaque: stage > 1 }"
+        id="canvas-wrapper"
+        @touchstart="startErasing"
+        @mousedown="startErasing"
+      >
         <vue-eraser
           ref="vueEraser"
           :size="80"
@@ -37,6 +42,7 @@ export default {
   name: 'Onboarding',
   props: {
     goToWaiting: Function,
+    stopCountdown: Function
   },
   data() {
     return { stage: 1 }
@@ -46,10 +52,11 @@ export default {
   },
   methods: {
     startErasing() {
+      new NoSleep().enable()
       this.stage = 2
     },
     complete() {
-      new NoSleep().enable()
+      this.stopCountdown()
       this.$socket.emit("client_erase_block")
       if (process.env.NODE_ENV === "development") {
         setTimeout(() => { this.goToWaiting() })

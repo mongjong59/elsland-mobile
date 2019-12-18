@@ -1,5 +1,13 @@
 <template>
-  <div class="wrapper" @touchstart="dragStart" @touchmove="dragMove" @touchend="dragEnd">
+  <div
+    id="wrapper"
+    @touchstart="dragStart"
+    @touchmove="dragMove"
+    @touchend="dragEnd"
+    @mousedown="dragStart"
+    @mousemove="dragMove"
+    @mouseup="dragEnd"
+  >
     <div class="centered rod-wrapper">
       <div class="rod" :style="{ transform: `translateY(-${this.screenRodOffset}px)` }" />
     </div>
@@ -32,11 +40,15 @@ export default {
   },
   methods: {
     dragStart(e) {
-      this.prevPosition = e.targetTouches[0].pageY
+      let touch = e
+      if (e.targetTouches) touch = e.targetTouches[0]
+      this.prevPosition = touch.pageY
     },
     dragMove(e) {
       if (this.progress < 0 || this.progress >= 1) return
-      const position = e.targetTouches[0].pageY
+      let touch = e
+      if (e.targetTouches) touch = e.targetTouches[0]
+      const position = touch.pageY
       const diff = position - this.prevPosition
       if (diff <= 0) return
       this.progress += diff / 700
@@ -61,17 +73,17 @@ export default {
       const IMG_ROD_OFFSET = 800
       const IMG_SHADOW_OFFSET = 900
       const IMG_CURTAIN_WIDTH = 840
-      const screenWidth = screen.width
-      this.screenRodOffset = screen.width / this.bgWidth * IMG_ROD_OFFSET
-      this.screenShadowOffset = screen.width / this.bgWidth * IMG_SHADOW_OFFSET
-      this.screenCurtainWidth = screen.width / this.bgWidth * IMG_CURTAIN_WIDTH
+      const wrapperWidth = document.getElementById("wrapper").offsetWidth
+      this.screenRodOffset = wrapperWidth / this.bgWidth * IMG_ROD_OFFSET
+      this.screenShadowOffset = wrapperWidth / this.bgWidth * IMG_SHADOW_OFFSET
+      this.screenCurtainWidth = wrapperWidth / this.bgWidth * IMG_CURTAIN_WIDTH
     }
   }
 }
 </script>
 
 <style scoped>
-.wrapper {
+#wrapper {
   height: 100%;
   width: 100%;
   background: url("../assets/images/shadows-bg.jpg") center;
