@@ -26,7 +26,8 @@ export default {
   props: {
     shadowIndex: Number,
     development: Boolean,
-    goToWaiting: Function
+    goToWaiting: Function,
+    stopCountdown: Function
   },
   data() {
     return {
@@ -53,6 +54,7 @@ export default {
       if (diff <= 0) return
       this.progress += diff / 700
       if (this.progress > 1) this.progress = 1
+      if (this.progress === 1) this.stopCountdown()
       this.prevPosition = position
     },
     dragEnd(e) {

@@ -26,7 +26,8 @@ export default {
     screenIndex: Number,
     lightIndex: Number,
     development: Boolean,
-    goToWaiting: Function
+    goToWaiting: Function,
+    stopCountdown: Function
   },
   data() {
     return {
@@ -73,6 +74,7 @@ export default {
         const nextProgress = diffBottom / this.screenMaxDistance
         if (nextProgress > this.progress) this.progress = nextProgress
         if (this.progress > 1) this.progress = 1
+        if (this.progress === 1) this.stopCountdown()
         this.prevPosition = position
       } else {
         this.progress = 1

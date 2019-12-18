@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import { TimelineLite } from 'gsap'
+import { TimelineLite } from 'gsap/dist/gsap'
 
 export default {
   name: 'Train',
@@ -35,6 +35,7 @@ export default {
     cutIndex: Number,
     segmentIndex: Number,
     goToWaiting: Function,
+    stopCountdown: Function,
     development: Boolean
   },
   data() {
@@ -48,6 +49,7 @@ export default {
   watch: {
     progress(newProgress) {
       if (newProgress >= 1) {
+        this.stopCountdown()
         this.$socket.emit("client_cut", this.cutIndex)
         if (this.development) {
           setTimeout(() => { this.explode() }, 1000)

@@ -1,17 +1,42 @@
 <template>
   <div id="app">
     <transition name="fade" mode="out-in">
-      <ConnectionStatus v-if="isScene('CONNECTION_STATUS')" :goToNextScene="goToNextScene" :development="development" />
+      <ConnectionStatus v-if="isScene('CONNECTION_STATUS')"
+        :goToNextScene="goToNextScene"
+        :development="development"
+      />
 
-      <Onboarding v-if="isScene('ONBOARDING')" :goToWaiting="goToWaiting" :stopCountdown="stopCountdown" />
+      <Onboarding v-if="isScene('ONBOARDING')"
+        :goToWaiting="goToWaiting"
+        :stopCountdown="stopCountdown"
+      />
 
-      <Train v-if="isScene('TRAIN')" v-bind="propsTrain" :goToWaiting="goToWaiting" :stopCountdown="stopCountdown" :development="development" />
+      <Train v-if="isScene('TRAIN')"
+        v-bind="propsTrain"
+        :goToWaiting="goToWaiting"
+        :stopCountdown="stopCountdown"
+        :development="development"
+      />
 
-      <Screens v-if="isScene('SCREENS')" :goToWaiting="goToWaiting" :stopCountdown="stopCountdown" :development="development" />
+      <Screens v-if="isScene('SCREENS')"
+        :goToWaiting="goToWaiting"
+        :stopCountdown="stopCountdown"
+        :development="development"
+      />
 
-      <Shadows v-if="isScene('SHADOWS')" :shadowIndex="shadowIndex" :goToWaiting="goToWaiting" :stopCountdown="stopCountdown" :development="development" />
+      <Shadows v-if="isScene('SHADOWS')"
+        :shadowIndex="shadowIndex"
+        :goToWaiting="goToWaiting"
+        :stopCountdown="stopCountdown"
+        :development="development"
+      />
 
-      <Staircase v-if="isScene('STAIRCASE')" v-bind="propsStaircase" :goToWaiting="goToWaiting" :stopCountdown="stopCountdown" :development="development" />
+      <Staircase v-if="isScene('STAIRCASE')"
+        v-bind="propsStaircase"
+        :goToWaiting="goToWaiting"
+        :stopCountdown="stopCountdown"
+        :development="development"
+      />
     </transition>
     <transition name="fade">
       <Waiting v-if="waiting" />
@@ -78,7 +103,7 @@ export default {
       },
       waiting: false,
       blinking: false,
-      development: false
+      development: true
       // development: process.env.NODE_ENV === 'production'
     }
   },
@@ -94,6 +119,7 @@ export default {
       this.goToScene(SCENES[i + 1])
     },
     goToWaiting() {
+      if (this.waiting) return
       this.waiting = true
       this.stopCountdown()
       this.goToNextScene()
@@ -135,7 +161,7 @@ export default {
       e.keyCode === 32 && _this.goToNextScene()
     })
     setInterval(() => {
-      // if (this.countdown > 0) this.countdown -= 1
+      if (this.countdown > 0) this.countdown -= 1
     }, 1000)
     // this.goToScene("STAIRCASE")
   },

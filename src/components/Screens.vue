@@ -23,6 +23,7 @@ export default {
   name: 'Screens',
   props: {
     development: Boolean,
+    stopCountdown: Function,
     goToWaiting: Function
   },
   data() {
@@ -34,6 +35,7 @@ export default {
   methods: {
     onButtonDown() {
       if (this.buttonPressed) return
+      this.stopCountdown()
       this.$socket.emit('client_turnoff_screen')
       this.buttonDown = true
       this.buttonPressed = true
