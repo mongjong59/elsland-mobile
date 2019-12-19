@@ -8087,6 +8087,11 @@ vm-browserify@^1.0.1:
   resolved "https://registry.yarnpkg.com/vm-browserify/-/vm-browserify-1.1.2.tgz#78641c488b8e6ca91a75f511e7a3b32a86e5dda0"
   integrity sha512-2ham8XPWTONajOR0ohOKOHXkm3+gaBmGut3SRuu75xLd/RRaY6vqgh8NBYYk7+RW3u5AtzPQZG8F10LHkl0lAQ==
 
+vue-draggable-resizable@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/vue-draggable-resizable/-/vue-draggable-resizable-2.1.0.tgz#b590212aef3c07d040aeceda784438068170fb08"
+  integrity sha512-DQe5JjiqPjndc3XZkkZAMVygMlJ4TLcpMWM78IkizHeJBfX5Ki6OKZPxrT+HE7w/12d+OfWom5Y5phYcrwCzqg==
+
 vue-eraser@^1.0.7:
   version "1.0.7"
   resolved "https://registry.yarnpkg.com/vue-eraser/-/vue-eraser-1.0.7.tgz#b21a3d21af8e53c2f803877843ed1d68f3263a05"

@@ -8,7 +8,7 @@
             Most of the experience will be on the BIG SCREEN.
             <br />
             <br />
-            When you notice yellow particles on the screen, look back onto your phone.
+            When you notice small particles on the screen, look back onto your phone.
           </p>
         </transition-group>
         <transition name="entrance-animation" delay="5000">

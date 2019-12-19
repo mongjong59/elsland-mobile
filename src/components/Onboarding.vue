@@ -19,6 +19,7 @@
         <vue-eraser
           ref="vueEraser"
           :size="80"
+          :completeRatio="0.75"
           resultSrc=""
           :coverSrc="require('../assets/images/onboarding-dark.png')"
           :completeFunction="complete"
@@ -59,7 +60,7 @@ export default {
       this.stopCountdown()
       this.$socket.emit("client_erase_block")
       if (process.env.NODE_ENV === "development") {
-        setTimeout(() => { this.goToWaiting() })
+        setTimeout(() => { this.goToWaiting() }, 2000)
       }
     }
   }

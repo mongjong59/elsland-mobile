@@ -63,7 +63,7 @@ export default {
 }
 
 .screen-wrapper {
-  padding-top: 50%;
+  padding-top: 30%;
   transition: transform 1s cubic-bezier(0.75, 0, 1, 0.25);
   background-size: cover;
   height: 100%;

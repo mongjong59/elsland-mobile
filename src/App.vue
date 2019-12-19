@@ -82,8 +82,8 @@ export default {
     Onboarding,
     Train,
     Screens,
-    Shadows,
-    Staircase
+    Staircase,
+    Shadows
   },
   data() {
     return {
@@ -94,12 +94,12 @@ export default {
         top: 0.3,
         bottom: 0.7,
         id: 0,
-        segmentIndex: 0
+        segmentIndex: -1
       },
       shadowIndex: 0,
       propsStaircase: {
-        screenIndex: 0,
-        lightIndex: 0
+        screenIndex: -1,
+        lightIndex: -1
       },
       waiting: false,
       blinking: false,
@@ -109,10 +109,10 @@ export default {
   },
   methods: {
     goToScene(name) {
+      setTimeout(() => { this.scene = name }, 2000)
       console.log("going to " + name)
-      this.scene = name
       if (name !== "ONBOARDING") return
-      setTimeout(() => { this.blink() }, 1500)
+      setTimeout(() => { this.blink() }, 3500)
     },
     goToNextScene() {
       const i = SCENES.indexOf(this.scene)
@@ -161,9 +161,9 @@ export default {
       e.keyCode === 32 && _this.goToNextScene()
     })
     setInterval(() => {
-      if (this.countdown > 0) this.countdown -= 1
+      // if (this.countdown > 0) this.countdown -= 1
     }, 1000)
-    // this.goToScene("STAIRCASE")
+    this.goToScene("STAIRCASE")
   },
   sockets: {
     cut_scene(data) {
@@ -189,6 +189,9 @@ export default {
       const lightIndex = data.light_index
       this.propsStaircase = { screenIndex, lightIndex }
     },
+    staircase_scene_wait() {
+      this.switchToScene("STAIRCASE")
+    },
     waiting_page() {
       if (this.development) return
       this.goToWaiting()
@@ -208,6 +211,11 @@ export default {
   font-size: 62.5%;
   height: 100%;
   position: relative;
+}
+
+.wrapper {
+  position: relative;
+  overflow: hidden;
 }
 
 .countdown {

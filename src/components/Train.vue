@@ -14,11 +14,13 @@
             <div class="centered carriage-divider" :style="{ width: dividerWidth, webkitClipPath: clipPathDivider }" />
           </div>
         </transition>
-        <div class="particle-wrapper" :style="{ transform: dividerTransform }">
-          <div class="centered" :style="{ width: particleWrapperWidth }">
-            <div class="particle" :style="{ right: particleRight }" />
+        <transition name="fade">
+          <div v-if="!cutCompleted" class="particle-wrapper" :style="{ transform: dividerTransform }">
+            <div class="centered" :style="{ width: particleWrapperWidth }">
+              <div class="particle" :style="{ right: particleRight }" />
+            </div>
           </div>
-        </div>
+        </transition>
       </div>
     </div>
   </div>
@@ -154,6 +156,8 @@ export default {
       const timeline = new TimelineLite()
       timeline.to(carriage1, 2, { y: 600, x: -300, rotate: -30, scale: 0.5, rotateX: 90, rotateY: 90 })
       timeline.to(carriage2, 2, { y: 600, x: +300, rotate: 50, scale: 0.2, rotateX: 90, rotateY: 90 }, 0)
+
+      setTimeout(() => { this.goToWaiting() }, 3000)
     },
     clipPath(right = false) {
       const cutPointX = this.top * 100 - (this.top - this.bottom) * 100 * this.progress
@@ -233,9 +237,10 @@ export default {
   top: 50%;
   transform: translate(50%, -50%);
   position: absolute;
-  height: 50px;
-  width: 50px;
-  background: url("../assets/images/train-particle.png")
+  height: 150px;
+  width: 150px;
+  background: url("../assets/images/particle.png");
+  background-size: contain;
 }
 
 .fall-left-leave-active, .fall-right-leave-active {

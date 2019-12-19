@@ -11,6 +11,12 @@
     <div class="centered rod-wrapper">
       <div class="rod" :style="{ transform: `translateY(-${this.screenRodOffset}px)` }" />
     </div>
+    <div class="centered handle-top-wrapper">
+      <img class="handle-top" src="../assets/images/shadows-handle-top.png" />
+    </div>
+    <div class="centered handle-wrapper">
+      <img class="handle" src="../assets/images/shadows-handle.png" />
+    </div>
     <div class="centered curtain-wrapper" :style="{ width: this.screenCurtainWidth + 'px', height: this.screenCurtainWidth * 2 + 'px' }">
       <img class="curtain" :style="{ transform: `translateY(-${this.progress * 100}%)` }" src="../assets/images/shadows-curtain.png" />
     </div>
@@ -72,9 +78,9 @@ export default {
     img.src = require("../assets/images/shadows-bg.jpg")
     img.onload = () => {
       this.bgWidth = img.width
-      const IMG_ROD_OFFSET = 800
+      const IMG_ROD_OFFSET = 680
       const IMG_SHADOW_OFFSET = 900
-      const IMG_CURTAIN_WIDTH = 840
+      const IMG_CURTAIN_WIDTH = 680
       const wrapperWidth = document.getElementById("wrapper").offsetWidth
       this.screenRodOffset = wrapperWidth / this.bgWidth * IMG_ROD_OFFSET
       this.screenShadowOffset = wrapperWidth / this.bgWidth * IMG_SHADOW_OFFSET
@@ -128,6 +134,24 @@ export default {
   height: 30px;
   background: green;
   position: absolute;
+}
+
+.handle-top-wrapper {
+  z-index: 99;
+}
+
+.handle-top {
+  width: 20%;
+  /* top: 0; */
+  /* position: absolute; */
+}
+
+.handle-wrapper {
+  z-index: 99;
+}
+
+.handle {
+  width: 40%;
 }
 
 .shadow-wrapper {
