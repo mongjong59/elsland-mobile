@@ -19,7 +19,7 @@
     <div class="centered handle-wrapper">
       <img
         class="handle"
-        :style="{ transform: `translateY(-${(1 - this.progress) * 100 - 10}%)` }"
+        :style="{ transform: `translateY(-${(1 - this.progress) * 100 - 10.0}%)` }"
         src="../assets/images/shadows-handle.png"
       />
     </div>
@@ -60,7 +60,8 @@ export default {
       this.prevPosition = touch.pageY
     },
     dragMove(e) {
-      console.log(this.progress)
+      e.preventDefault()
+      if(e.type === "mousemove" && e.buttons !== 1) return
       if (this.progress < 0 || this.progress >= 1) return
       let touch = e
       if (e.targetTouches) touch = e.targetTouches[0]
@@ -77,7 +78,7 @@ export default {
         index: this.shadowIndex,
         progress: this.progress
       })
-      if (this.development && this.progress >= 1) {
+      if (this.development && this.progress >= 0.75) {
         setTimeout(() => { this.goToWaiting() }, 1000)
       }
     }
@@ -89,7 +90,7 @@ export default {
       this.bgWidth = img.width
       const IMG_ROD_OFFSET = 680
       const IMG_SHADOW_OFFSET = 900
-      const IMG_HANDLE_TOP_OFFSET = 685
+      const IMG_HANDLE_TOP_OFFSET = 680
       const IMG_HANDLE_OFFSET = 200
       const IMG_CURTAIN_WIDTH = 680
       const wrapperWidth = document.getElementById("wrapper").offsetWidth
@@ -169,6 +170,7 @@ export default {
 
 .handle {
   width: 100%;
+  cursor: pointer;
 }
 
 .shadow-wrapper {

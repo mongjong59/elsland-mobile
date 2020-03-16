@@ -1,9 +1,15 @@
 <template>
     <transition-group tag="div" class="wrapper" name="fade" mode="out-in">
       <h1 class="centered" v-show="stage === 1" key="1">Connecting...</h1>
+
       <div class="text" v-show="stage >= 2" key="2">
+
         <transition-group tag="div" name="fade" mode="out-in">
-          <img class="welcome" v-show="stage === 2" src="../assets/images/connection-status-welcome.svg" key="1" />
+          <div v-show="stage === 2" key="1">
+            <img class="welcome" src="../assets/images/connection-status-welcome.svg" />
+            <p class="start button" @click="start">Start</p>
+          </div>
+
           <p class="instruction" v-show="stage === 3" key="2">
             Most of the experience will be on the BIG SCREEN.
             <br />
@@ -31,7 +37,7 @@ export default {
   watch: {
     stage: function(val) {
       // welcome
-      if (val === 2) {
+      if (val === 2 && !this.development) {
         setTimeout(() => { this.stage = 3 }, 5000)
       }
       if (val === 3 && this.development) {
@@ -46,6 +52,11 @@ export default {
       if (val === 6) {
         setTimeout(() => { this.goToScene("ONBOARDING") })
       }
+    }
+  },
+  methods: {
+    start() {
+      this.stage = 4
     }
   },
   sockets: {
@@ -95,6 +106,13 @@ export default {
   z-index: 3;
   top: 35%;
   transform: translate(-50%, -50%);
+}
+
+.start {
+  left: 50%;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  top: 46.5%;
 }
 
 .instruction {

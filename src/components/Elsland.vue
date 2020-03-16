@@ -7,6 +7,9 @@
       <div>
         DEC 20, 2019
       </div>
+      <div class="restart button" @click="restart">
+        Restart
+      </div>
     </div>
   </div>
 </template>
@@ -19,8 +22,10 @@ export default {
       date: new Date()
     }
   },
-  watch: {
-
+  methods: {
+    restart() {
+      this.goToScene("CONNECTION_STATUS")
+    }
   },
   computed: {
     seconds() {
@@ -63,5 +68,10 @@ export default {
   font-weight: 800;
   font-style: italic;
   font-size: 2rem;
+}
+
+.restart {
+  display: inline-block;
+  margin-top: 1rem;
 }
 </style>

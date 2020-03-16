@@ -1,1 +1,4 @@
-# Elsland Mobile
+# Elsland Mobile Client
+`npm install`
+
+`npm serve`

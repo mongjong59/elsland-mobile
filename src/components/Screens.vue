@@ -8,7 +8,7 @@
     <div class="remote-control-wrapper">
       <img :class="{ inclined: buttonDown }" class="remote-control" :src="remoteControlImg" />
       <div
-        class="button centered-horizontal"
+        class="remote-button centered-horizontal"
         @touchstart="onButtonDown"
         @touchend="onButtonUp"
         @mousedown="onButtonDown"
@@ -85,10 +85,11 @@ export default {
   width: 100%;
 }
 
-.button {
+.remote-button {
   top: 0;
   width: 60px;
   height: 60px;
+  cursor: pointer;
 }
 
 .inclined {

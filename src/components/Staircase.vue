@@ -41,15 +41,13 @@
       <source src="../assets/audio/staircase.wav" type="audio/wav">
       Your browser does not support the audio element.
     </audio>
-    <div class="debug">{{ debug }}</div>
-    <div class="debug2">{{ debug2 }}</div>
-    <transition name="fade">
+    <!-- <transition name="fade">
       <div v-show="!active">
         <div class="overlay">
           <h1 class="centered">Wait...</h1>
         </div>
       </div>
-    </transition>
+    </transition> -->
   </div>
 </template>
 
@@ -88,13 +86,22 @@ export default {
     active() {
       return this.developmentActive || this.screenIndex != -1 && this.lightIndex != -1
     },
+    appDOM() {
+      return document.getElementById("app")
+    },
+    appWidth() {
+      return this.appDOM.offsetWidth
+    },
+    appHeight() {
+      return this.appDOM.offsetHeight
+    },
     particleSize() {
-      return window.innerWidth * this.screenParticleSidePercentage / 100
+      return this.appWidth * this.screenParticleSidePercentage / 100
     },
     particleInitialPosition() {
       const { particleSize } = this
-      const x = window.innerWidth * 0.3
-      const y = window.innerHeight - particleSize + 0.17 * particleSize
+      const x = this.appWidth * 0.3
+      const y = this.appHeight - particleSize + 0.17 * particleSize
       return { x, y }
     },
     particleCenterPosition() {
@@ -103,10 +110,10 @@ export default {
       return { x, y }
     },
     jellyfishHeadCenterPosition() {
-      const x = 0.43 * window.innerWidth
+      const x = 0.43 * this.appWidth
 
-      const bgHeight = window.innerWidth / this.bgWidth * this.bgHeight
-      const y = bgHeight * 0.31 - (0.5 * (bgHeight - window.innerHeight))
+      const bgHeight = this.appWidth / this.bgWidth * this.bgHeight
+      const y = bgHeight * 0.31 - (0.5 * (bgHeight - this.appHeight))
 
       return { x, y }
     },
@@ -141,7 +148,7 @@ export default {
       const top = y - this.particleSize / 2
       timeline.to(particleWrapper, 1.5, { left, top, ease: Sine.easeOut })
 
-      setTimeout(() => { this.goToWaiting() }, 7000)
+      setTimeout(() => { this.goToWaiting() }, 5000)
     },
     onDragging(left, top) {
       this.particleX = left
@@ -282,6 +289,7 @@ export default {
 }
 
 .handle {
+  cursor: pointer;
   border-radius: 50%;
   /* background: yellow; */
 }
@@ -290,16 +298,6 @@ export default {
   height: 5px;
   width: 5px;
   background: red;
-  position: absolute;
-}
-
-.debug {
-  top: 0;
-  position: absolute;
-}
-
-.debug2 {
-  top: 20px;
   position: absolute;
 }
 

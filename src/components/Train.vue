@@ -62,7 +62,7 @@ export default {
         timeline.to(carriage2, 0.8, { y: 7, x: +9, rotate: 2, scale: 0.96, rotateX: 7, rotateY: 2, ease: Sine.easeIn }, 0)
 
         if (this.development) {
-          setTimeout(() => { this.explode() }, 1000)
+          setTimeout(() => { this.explode() }, 3000)
           setTimeout(() => { this.goToWaiting() }, 3000)
         }
       }
@@ -125,6 +125,8 @@ export default {
   },
   methods: {
     cut(e) {
+      e.preventDefault()
+      if(e.type === "mousemove" && e.buttons !== 1) return
       if (this.progress > 1) this.progress = 1
       if (this.progress >= 1) return
 
@@ -239,6 +241,10 @@ export default {
 
 .carriage-divider {
   border-top: 3px white dashed;
+}
+
+.particle-wrapper {
+  cursor: pointer;
 }
 
 .particle {

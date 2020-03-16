@@ -43,6 +43,19 @@ html, body, .full-height {
   opacity: 1 !important;
 }
 
+.button {
+  font-size: 1.7rem;
+  border: 5px white solid;
+  padding: 8px 15px;
+  cursor: pointer;
+  transition: all 1s;
+}
+
+.button:hover {
+  background: white;
+  color: black;
+}
+
 .fade-enter-active, .fade-leave-active {
   transition: opacity 1.5s;
 }

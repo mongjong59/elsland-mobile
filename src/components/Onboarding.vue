@@ -19,7 +19,7 @@
         <vue-eraser
           ref="vueEraser"
           :size="80"
-          :completeRatio="0.75"
+          :completeRatio="development ? 0.3 : 0.75"
           resultSrc=""
           :coverSrc="require('../assets/images/onboarding-dark.png')"
           :completeFunction="complete"
@@ -88,6 +88,7 @@ export default {
   top: 0;
   left: 0;
   width: 100%;
+  cursor: pointer;
 }
 
 .instruction {

@@ -6,9 +6,11 @@
         :development="development"
       />
 
-      <Onboarding v-if="isScene('ONBOARDING')"
+      <Onboarding
+        v-if="isScene('ONBOARDING')"
         :goToWaiting="goToWaiting"
         :stopCountdown="stopCountdown"
+        :development="development"
       />
 
       <Train v-if="isScene('TRAIN')"
@@ -24,13 +26,6 @@
         :development="development"
       />
 
-      <Shadows v-if="isScene('SHADOWS')"
-        :shadowIndex="shadowIndex"
-        :goToWaiting="goToWaiting"
-        :stopCountdown="stopCountdown"
-        :development="development"
-      />
-
       <Staircase v-if="isScene('STAIRCASE')"
         v-bind="propsStaircase"
         :goToWaiting="goToWaiting"
@@ -38,8 +33,16 @@
         :development="development"
       />
 
+      <Shadows v-if="isScene('SHADOWS')"
+        :shadowIndex="shadowIndex"
+        :goToWaiting="goToWaiting"
+        :stopCountdown="stopCountdown"
+        :development="development"
+      />
+
       <Elsland v-if="isScene('ELSLAND')"
         :development="development"
+        :goToScene="goToScene"
       />
     </transition>
     <transition name="fade">
@@ -49,11 +52,6 @@
     <div v-if="countdown < 16 && countdown > 0"
       class="countdown"
     >{{ countdown }}</div>
-    <button v-if="development"
-      class="debug-button"
-      @touchstart="switchToNextScene"
-      @click="stopWaiting"
-    >Jump to Next Scene</button>
     <Blink v-if="blinking" />
   </div>
 </template>
@@ -110,16 +108,15 @@ export default {
       },
       waiting: false,
       blinking: false,
-      development: false
-      // development: process.env.NODE_ENV === 'production'
+      development: true
     }
   },
   methods: {
     goToScene(name) {
-      setTimeout(() => { this.scene = name }, 2000)
+      this.scene = name
       console.log("going to " + name)
       if (name !== "ONBOARDING") return
-      setTimeout(() => { this.blink() }, 3500)
+      setTimeout(() => { this.blink() }, 500)
     },
     goToNextScene() {
       const i = SCENES.indexOf(this.scene)
@@ -131,7 +128,7 @@ export default {
       this.stopCountdown()
       this.goToNextScene()
       if (this.development) {
-        setTimeout(() => { this.stopWaiting() }, 3000)
+        setTimeout(() => { this.stopWaiting() }, 5000)
       }
     },
     switchToScene(name) {
@@ -180,7 +177,6 @@ export default {
     setInterval(() => {
       if (this.countdown > 0) this.countdown -= 1
     }, 1000)
-    // this.goToScene("SHADOWS")
   },
   sockets: {
     cut_scene(data) {
