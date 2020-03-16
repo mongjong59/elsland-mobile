@@ -12,10 +12,16 @@
       <div class="rod" :style="{ transform: `translateY(-${this.screenRodOffset}px)` }" />
     </div>
     <div class="centered handle-top-wrapper">
-      <img class="handle-top" src="../assets/images/shadows-handle-top.png" />
+      <img
+        :style="{ transform: `translateY(-${this.screenHandleTopOffset}px)` }"
+        class="handle-top" src="../assets/images/shadows-handle-top.png" />
     </div>
     <div class="centered handle-wrapper">
-      <img class="handle" src="../assets/images/shadows-handle.png" />
+      <img
+        class="handle"
+        :style="{ transform: `translateY(-${(1 - this.progress) * 100 - 10}%)` }"
+        src="../assets/images/shadows-handle.png"
+      />
     </div>
     <div class="centered curtain-wrapper" :style="{ width: this.screenCurtainWidth + 'px', height: this.screenCurtainWidth * 2 + 'px' }">
       <img class="curtain" :style="{ transform: `translateY(-${this.progress * 100}%)` }" src="../assets/images/shadows-curtain.png" />
@@ -40,6 +46,8 @@ export default {
       progress: 0,
       prevPosition: 0,
       screenRodOffset: 0,
+      screenHandleTopOffset: 0,
+      screenHandleOffset: 0,
       screenShadowOffset: 0,
       screenCurtainWidth: 0,
       bgWidth: 0
@@ -52,6 +60,7 @@ export default {
       this.prevPosition = touch.pageY
     },
     dragMove(e) {
+      console.log(this.progress)
       if (this.progress < 0 || this.progress >= 1) return
       let touch = e
       if (e.targetTouches) touch = e.targetTouches[0]
@@ -80,9 +89,13 @@ export default {
       this.bgWidth = img.width
       const IMG_ROD_OFFSET = 680
       const IMG_SHADOW_OFFSET = 900
+      const IMG_HANDLE_TOP_OFFSET = 685
+      const IMG_HANDLE_OFFSET = 200
       const IMG_CURTAIN_WIDTH = 680
       const wrapperWidth = document.getElementById("wrapper").offsetWidth
       this.screenRodOffset = wrapperWidth / this.bgWidth * IMG_ROD_OFFSET
+      this.screenHandleTopOffset = wrapperWidth / this.bgWidth * IMG_HANDLE_TOP_OFFSET
+      this.screenHandleOffset = wrapperWidth / this.bgWidth * IMG_HANDLE_OFFSET
       this.screenShadowOffset = wrapperWidth / this.bgWidth * IMG_SHADOW_OFFSET
       this.screenCurtainWidth = wrapperWidth / this.bgWidth * IMG_CURTAIN_WIDTH
     }
@@ -138,6 +151,7 @@ export default {
 
 .handle-top-wrapper {
   z-index: 99;
+  left: 77.2%;
 }
 
 .handle-top {
@@ -147,11 +161,14 @@ export default {
 }
 
 .handle-wrapper {
+  left: 76%;
   z-index: 99;
+  overflow: hidden;
+  width: 4.05%;
 }
 
 .handle {
-  width: 40%;
+  width: 100%;
 }
 
 .shadow-wrapper {

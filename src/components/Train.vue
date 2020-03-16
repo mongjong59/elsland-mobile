@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import { TimelineLite } from 'gsap/dist/gsap'
+import { TimelineLite, Sine } from 'gsap/dist/gsap'
 
 export default {
   name: 'Train',
@@ -53,6 +53,14 @@ export default {
       if (newProgress >= 1) {
         this.stopCountdown()
         this.$socket.emit("client_cut", this.cutIndex)
+
+        const container = document.getElementById('carriage-container')
+        container.style.height = container.offsetHeight + 'px'
+        const { carriage1, carriage2 } = this.$refs
+        const timeline = new TimelineLite()
+        timeline.to(carriage1, 0.8, { y: 8, x: -6, rotate: -1, scale: 0.96, rotateX: 3, rotateY: 6, ease: Sine.easeIn })
+        timeline.to(carriage2, 0.8, { y: 7, x: +9, rotate: 2, scale: 0.96, rotateX: 7, rotateY: 2, ease: Sine.easeIn }, 0)
+
         if (this.development) {
           setTimeout(() => { this.explode() }, 1000)
           setTimeout(() => { this.goToWaiting() }, 3000)

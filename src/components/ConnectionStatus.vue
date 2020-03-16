@@ -25,7 +25,7 @@
 export default {
   name: 'ConnectionStatus',
   props: {
-    goToNextScene: Function,
+    goToScene: Function,
     development: Boolean
    },
   watch: {
@@ -44,7 +44,7 @@ export default {
         setTimeout(() => { this.stage = 6 }, 8000)
       }
       if (val === 6) {
-        setTimeout(() => { this.goToNextScene() })
+        setTimeout(() => { this.goToScene("ONBOARDING") })
       }
     }
   },

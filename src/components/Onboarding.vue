@@ -43,7 +43,8 @@ export default {
   name: 'Onboarding',
   props: {
     goToWaiting: Function,
-    stopCountdown: Function
+    stopCountdown: Function,
+    development: Boolean
   },
   data() {
     return { stage: 1 }
@@ -59,7 +60,7 @@ export default {
     complete() {
       this.stopCountdown()
       this.$socket.emit("client_erase_block")
-      if (process.env.NODE_ENV === "development") {
+      if (this.development) {
         setTimeout(() => { this.goToWaiting() }, 2000)
       }
     }

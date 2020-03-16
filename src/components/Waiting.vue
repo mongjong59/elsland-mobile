@@ -2,14 +2,17 @@
   <div class="wrapper">
     <div class="centered container">
       <img class="logo" src="../assets/images/logo-white.svg" />
-      <p class="text">Wait for next interaction!</p>
+      <p v-if="showText" class="text">Wait for the next interaction!</p>
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'Waiting'
+  name: 'Waiting',
+  props: {
+    showText: Boolean
+  }
 }
 </script>
 

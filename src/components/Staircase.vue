@@ -7,6 +7,7 @@
     /> -->
     <img
       class="centered halo"
+      :class="{ 'halo-animated': !this.completed }"
       src="../assets/images/staircase-halo.png"
       :style="{ animationDuration: this.animationDuration }"
     />
@@ -105,7 +106,7 @@ export default {
       const x = 0.43 * window.innerWidth
 
       const bgHeight = window.innerWidth / this.bgWidth * this.bgHeight
-      const y = bgHeight * 0.32 - (0.5 * (bgHeight - window.innerHeight))
+      const y = bgHeight * 0.31 - (0.5 * (bgHeight - window.innerHeight))
 
       return { x, y }
     },
@@ -131,6 +132,7 @@ export default {
       // const particle = document.getElementById("particle-wrapper");
       // TweenLite.killTweensOf(particle)
       this.completed = true
+      this.stopCountdown()
       const { audio, particleWrapper } = this.$refs
       audio.play()
       const timeline = new TimelineLite()
@@ -138,6 +140,8 @@ export default {
       const left = x - this.particleSize / 2
       const top = y - this.particleSize / 2
       timeline.to(particleWrapper, 1.5, { left, top, ease: Sine.easeOut })
+
+      setTimeout(() => { this.goToWaiting() }, 7000)
     },
     onDragging(left, top) {
       this.particleX = left
@@ -170,7 +174,9 @@ export default {
       this.initialDistance = this.distance
     }
 
-    setTimeout(() => { this.developmentActive = true }, 5000)
+    if (this.development) {
+      setTimeout(() => { this.developmentActive = true }, 5000)
+    }
     // const particle = document.getElementById("particle-wrapper");
     //
     // const randomX = random(10, 20);
@@ -236,6 +242,9 @@ export default {
 .halo {
   mix-blend-mode: screen;
   width: 100%;
+}
+
+.halo-animated {
   animation-name: halo-animation;
   animation-iteration-count: infinite;
   animation-timing-function: ease-in-out;
@@ -304,13 +313,13 @@ export default {
 
 @keyframes halo-animation {
   0%  {
-    opacity: 0;
-  }
-  50% {
     opacity: 0.9;
   }
-  100% {
+  50% {
     opacity: 0;
+  }
+  100% {
+    opacity: 0.9;
   }
 }
 
@@ -328,13 +337,13 @@ export default {
 
 @keyframes particle-completed-animation {
   0%  {
-    transform: scale(1.2);
-  }
-  50% {
     transform: scale(1.3);
   }
+  50% {
+    transform: scale(1.6);
+  }
   100% {
-    transform: scale(1.2);
+    transform: scale(1.3);
   }
 }
 </style>

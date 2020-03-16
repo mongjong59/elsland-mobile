@@ -2,7 +2,7 @@
   <div id="app">
     <transition name="fade" mode="out-in">
       <ConnectionStatus v-if="isScene('CONNECTION_STATUS')"
-        :goToNextScene="goToNextScene"
+        :goToScene="goToScene"
         :development="development"
       />
 
@@ -37,9 +37,13 @@
         :stopCountdown="stopCountdown"
         :development="development"
       />
+
+      <Elsland v-if="isScene('ELSLAND')"
+        :development="development"
+      />
     </transition>
     <transition name="fade">
-      <Waiting v-if="waiting" />
+      <Waiting v-if="waiting" :showText="this.scene != 'ELSLAND'" />
     </transition>
 
     <div v-if="countdown < 16 && countdown > 0"
@@ -47,8 +51,8 @@
     >{{ countdown }}</div>
     <button v-if="development"
       class="debug-button"
-      @touchstart="goToNextScene"
-      @click="goToNextScene"
+      @touchstart="switchToNextScene"
+      @click="stopWaiting"
     >Jump to Next Scene</button>
     <Blink v-if="blinking" />
   </div>
@@ -61,16 +65,18 @@ import ConnectionStatus from './components/ConnectionStatus.vue'
 import Onboarding from './components/Onboarding.vue'
 import Train from './components/Train.vue'
 import Screens from './components/Screens.vue'
-import Shadows from './components/Shadows.vue'
 import Staircase from './components/Staircase.vue'
+import Shadows from './components/Shadows.vue'
+import Elsland from './components/Elsland.vue'
 
 const SCENES = [
   "CONNECTION_STATUS",
   "ONBOARDING",
   "TRAIN",
   "SCREENS",
+  "STAIRCASE",
   "SHADOWS",
-  "STAIRCASE"
+  "ELSLAND"
 ]
 
 export default {
@@ -83,7 +89,8 @@ export default {
     Train,
     Screens,
     Staircase,
-    Shadows
+    Shadows,
+    Elsland
   },
   data() {
     return {
@@ -94,7 +101,7 @@ export default {
         top: 0.3,
         bottom: 0.7,
         id: 0,
-        segmentIndex: -1
+        segmentIndex: 0
       },
       shadowIndex: 0,
       propsStaircase: {
@@ -103,7 +110,7 @@ export default {
       },
       waiting: false,
       blinking: false,
-      development: true
+      development: false
       // development: process.env.NODE_ENV === 'production'
     }
   },
@@ -119,7 +126,7 @@ export default {
       this.goToScene(SCENES[i + 1])
     },
     goToWaiting() {
-      if (this.waiting) return
+      if (this.waiting || this.isScene("ELSLAND")) return
       this.waiting = true
       this.stopCountdown()
       this.goToNextScene()
@@ -129,18 +136,20 @@ export default {
     },
     switchToScene(name) {
       this.goToScene(name)
-      this.stopWaiting()
+      if (this.waiting) this.stopWaiting()
+    },
+    switchToNextScene() {
+      const i = SCENES.indexOf(this.scene)
+      this.switchToScene(SCENES[i + 1])
     },
     stopCountdown() {
       this.countdown = -1
     },
     stopWaiting() {
       this.waiting = false
+      if (this.staircaseWaiting || this.isScene("ELSLAND")) return
       setTimeout(() => { this.blink() }, 700)
       this.countdown = 50
-    },
-    isScene(name) {
-      return name === this.scene
     },
     notWaiting() {
       return !this.waiting
@@ -148,6 +157,14 @@ export default {
     blink() {
       this.blinking = true
       setTimeout(() => { this.blinking = false }, 1000)
+    },
+    isScene(name) {
+      return name === this.scene
+    },
+  },
+  computed: {
+    staircaseWaiting() {
+      return this.isScene("STAIRCASE") && !this.waiting && this.propsStaircase.screenIndex === -1
     }
   },
   watch: {
@@ -158,12 +175,12 @@ export default {
   mounted() {
     const _this = this
     window.addEventListener('keydown', function(e) {
-      e.keyCode === 32 && _this.goToNextScene()
+      e.keyCode === 32 && _this.switchToNextScene()
     })
     setInterval(() => {
-      // if (this.countdown > 0) this.countdown -= 1
+      if (this.countdown > 0) this.countdown -= 1
     }, 1000)
-    this.goToScene("STAIRCASE")
+    // this.goToScene("SHADOWS")
   },
   sockets: {
     cut_scene(data) {
@@ -188,9 +205,14 @@ export default {
       const screenIndex = data.screen_index
       const lightIndex = data.light_index
       this.propsStaircase = { screenIndex, lightIndex }
+      this.countdown = 50
+      !this.waiting && this.blink()
     },
     staircase_scene_wait() {
       this.switchToScene("STAIRCASE")
+    },
+    elsland_scene() {
+      this.switchToScene("ELSLAND")
     },
     waiting_page() {
       if (this.development) return
@@ -214,6 +236,7 @@ export default {
 }
 
 .wrapper {
+  height: 100%;
   position: relative;
   overflow: hidden;
 }
@@ -221,7 +244,7 @@ export default {
 .countdown {
   transform: translateX(-50%);
   left: 50%;
-  bottom: 0;
+  bottom: 20px;
   font-size: 1.6rem;
   z-index: 999;
   position: absolute;
